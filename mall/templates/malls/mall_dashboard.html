@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ mall.name }} Dashboard</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Particle Background */
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin: 60px 0 40px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin: 0;
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin: 10px 0 0;
+        }
+
+        /* Create Shop Button */
+        .create-shop {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(106, 17, 203, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        .create-shop:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(106, 17, 203, 0.5);
+        }
+
+        /* Shops List */
+        .shops-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+
+        .shop-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .shop-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .shop-card h3 {
+            margin: 0;
+            padding: 20px;
+            font-size: 1.5em;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .shop-card p {
+            margin: 0;
+            padding: 20px;
+            font-size: 1em;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        /* Logout Button */
+        .logout-link {
+            display: block;
+            text-align: center;
+            margin: 60px 0;
+            font-size: 1.2em;
+            color: #6a11cb;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .logout-link:hover {
+            color: #2575fc;
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize Particles.js
+        particlesJS.load('particles-js', 'particles.json', function() {
+            console.log('Particles.js loaded!');
+        });
+    </script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Welcome to {{ mall.name }} Dashboard</h1>
+            <p>Logged in as {{ request.user.username }}</p>
+        </div>
+
+        <!-- Create a New Shop -->
+        <div style="text-align: center;">
+            <a href="{% url 'create_store' mall.id %}" class="create-shop">Create Shop</a>
+        </div>
+
+        <!-- Your Shops -->
+        <h2 style="text-align: center; font-size: 2em; color: #2c3e50; margin: 60px 0 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">Your Shops</h2>
+        <div class="shops-list">
+            {% for store in stores %}
+                <div class="shop-card">
+                    <h3>{{ store.name }}</h3>
+                    <p>{{ store.category }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Logout -->
+        <a href="{% url 'mall_logout' %}" class="logout-link">Logout</a>
+    </div>
+
+    <!-- Particles.js Configuration -->
+    <script>
+        // Custom Particles.js Configuration
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#6a11cb" },
+                shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 } },
+                opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+                size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+                line_linked: { enable: true, distance: 150, color: "#6a11cb", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, direction: "none", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
+            },
+            retina_detect: true
+        });
+    </script>
+</body>
+</html>

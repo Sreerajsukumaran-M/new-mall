@@ -1,0 +1,7 @@
+<h1>Edit Product</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Product</button>
+</form>
+<a href="{% url 'shop_dashboard' %}">Back to Dashboard</a>

@@ -1,0 +1,32 @@
+<h1>Shops in {{ mall.name }}</h1>
+<p>Location: {{ mall.location }}</p>
+
+<!-- Display the list of shops as clickable cards -->
+<div class="shop-cards">
+    {% for shop in shops %}
+        <div class="shop-card" onclick="window.location.href='{% url ' product_list ' shop.id %}'">
+            <h2>{{ shop.name }}</h2>
+            <p>{{ shop.category }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'mall_list' %}">Back to Mall List</a>
+
+<style>
+    .shop-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .shop-card {
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 200px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .shop-card:hover {
+        background-color: #f0f0f0;
+    }
+</style>
