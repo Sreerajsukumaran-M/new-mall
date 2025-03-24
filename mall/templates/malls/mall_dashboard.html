@@ -4,24 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ mall.name }} Dashboard</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            color: #333;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --success: #28a745;
+            --danger: #dc3545;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #7f8c8d;
+            --white: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.9);
         }
 
-        /* Particle Background */
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: var(--dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
         #particles-js {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: fixed;
             width: 100%;
             height: 100%;
             z-index: 0;
@@ -30,107 +46,176 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1.5rem;
             position: relative;
             z-index: 1;
         }
 
+        /* Typography */
+        h1, h2, h3 {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 1.8rem; }
+        h3 { font-size: 1.3rem; }
+
         /* Header */
         .header {
             text-align: center;
-            margin: 60px 0 40px;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        .header h1 {
-            font-size: 3em;
-            margin: 0;
-            color: #2c3e50;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 2.5rem 0;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .header p {
-            font-size: 1.2em;
-            color: #7f8c8d;
-            margin: 10px 0 0;
+            color: var(--gray);
+            margin-top: 0.5rem;
         }
 
-        /* Create Shop Button */
-        .create-shop {
+        /* Buttons */
+        .btn {
             display: inline-block;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            color: #fff;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
             text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
             box-shadow: 0 4px 12px rgba(106, 17, 203, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: slideIn 1s ease-in-out;
         }
 
-        .create-shop:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(106, 17, 203, 0.5);
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(106, 17, 203, 0.4);
         }
 
-        /* Shops List */
-        .shops-list {
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Shop Cards Grid */
+        .shops-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 60px 0;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
         }
 
         .shop-card {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
             overflow: hidden;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            animation: fadeInUp 1s ease-in-out;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .shop-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
         }
 
-        .shop-card h3 {
-            margin: 0;
-            padding: 20px;
-            font-size: 1.5em;
-            color: #2c3e50;
-            background: rgba(255, 255, 255, 0.2);
+        .shop-img-container {
+            height: 180px;
+            background: var(--light);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shop-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .shop-card:hover .shop-img {
+            transform: scale(1.05);
+        }
+
+        .shop-body {
+            padding: 1.25rem;
+        }
+
+        .shop-title {
+            margin-bottom: 0.75rem;
             text-align: center;
         }
 
-        .shop-card p {
-            margin: 0;
-            padding: 20px;
-            font-size: 1em;
-            color: #7f8c8d;
+        .shop-category {
+            color: var(--primary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5rem;
             text-align: center;
         }
 
-        /* Logout Button */
+        .shop-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .shop-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Logout Link */
         .logout-link {
             display: block;
             text-align: center;
-            margin: 60px 0;
-            font-size: 1.2em;
-            color: #6a11cb;
-            text-decoration: none;
+            margin: 2.5rem 0;
+            color: var(--primary);
             font-weight: 600;
+            text-decoration: none;
             transition: color 0.3s ease;
-            animation: fadeIn 1s ease-in-out;
         }
 
         .logout-link:hover {
-            color: #2575fc;
+            color: var(--secondary);
             text-decoration: underline;
         }
 
@@ -149,15 +234,22 @@
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .shops-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
-    <!-- Particles.js Library -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        // Initialize Particles.js
-        particlesJS.load('particles-js', 'particles.json', function() {
-            console.log('Particles.js loaded!');
-        });
-    </script>
 </head>
 <body>
     <!-- Particle Background -->
@@ -165,50 +257,105 @@
 
     <div class="container">
         <!-- Header -->
-        <div class="header">
-            <h1>Welcome to {{ mall.name }} Dashboard</h1>
-            <p>Logged in as {{ request.user.username }}</p>
-        </div>
+        <header class="header">
+            <h1>{{ mall.name }} Dashboard</h1>
+            <p>Welcome back, {{ request.user.username }}!</p>
+            <a href="{% url 'create_store' mall.id %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Shop
+            </a>
+        </header>
 
-        <!-- Create a New Shop -->
-        <div style="text-align: center;">
-            <a href="{% url 'create_store' mall.id %}" class="create-shop">Create Shop</a>
-        </div>
-
-        <!-- Your Shops -->
-        <h2 style="text-align: center; font-size: 2em; color: #2c3e50; margin: 60px 0 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">Your Shops</h2>
-        <div class="shops-list">
-            {% for store in stores %}
-                <div class="shop-card">
-                    <h3>{{ store.name }}</h3>
-                    <p>{{ store.category }}</p>
-                </div>
-            {% endfor %}
-        </div>
+        <!-- Shops Section -->
+        <section>
+            <h2>Your Shops</h2>
+            <div class="shops-grid">
+                {% for store in stores %}
+                    <article class="shop-card">
+                        <div class="shop-img-container">
+                            {% if store.shop_image %}
+                                <img src="{{ store.shop_image.url }}" alt="{{ store.name }}" class="shop-img">
+                            {% else %}
+                                <i class="bi bi-shop" style="font-size: 3rem; color: var(--gray);"></i>
+                            {% endif %}
+                        </div>
+                        <div class="shop-body">
+                            <h3 class="shop-title">{{ store.name }}</h3>
+                            <span class="shop-category">
+                                <i class="bi bi-tag"></i> {{ store.category }}
+                            </span>
+                            <p class="shop-desc">
+                                {{ store.description|truncatechars:100 }}
+                            </p>
+                            <div class="shop-actions">
+                                <a href="{% url 'update_store' store.id %}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="{% url 'delete_store' store.id %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="bi bi-shop"></i>
+                        <h3>No Shops Found</h3>
+                        <p>You haven't created any shops yet. Get started by creating your first shop!</p>
+                        <a href="{% url 'create_store' mall.id %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Create First Shop
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
 
         <!-- Logout -->
-        <a href="{% url 'mall_logout' %}" class="logout-link">Logout</a>
+        <a href="{% url 'mall_logout' %}" class="logout-link">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
     </div>
 
-    <!-- Particles.js Configuration -->
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Custom Particles.js Configuration
-        particlesJS("particles-js", {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#6a11cb" },
-                shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 } },
-                opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
-                size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
-                line_linked: { enable: true, distance: 150, color: "#6a11cb", opacity: 0.4, width: 1 },
-                move: { enable: true, speed: 6, direction: "none", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
-            },
-            interactivity: {
-                detect_on: "canvas",
-                events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
-                modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
-            },
-            retina_detect: true
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS("particles-js", {
+                particles: {
+                    number: { value: 70, density: { enable: true, value_area: 800 } },
+                    color: { value: "#6a11cb" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: { 
+                        enable: true, 
+                        distance: 120, 
+                        color: "#6a11cb", 
+                        opacity: 0.3, 
+                        width: 1 
+                    },
+                    move: { 
+                        enable: true, 
+                        speed: 3, 
+                        direction: "none", 
+                        random: true, 
+                        straight: false, 
+                        out_mode: "out" 
+                    }
+                },
+                interactivity: {
+                    detect_on: "window",
+                    events: { 
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true 
+                    },
+                    modes: { 
+                        repulse: { distance: 80, duration: 0.4 },
+                        push: { particles_nb: 3 } 
+                    }
+                },
+                retina_detect: true
+            });
         });
     </script>
 </body>

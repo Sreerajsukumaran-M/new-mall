@@ -1,11 +1,299 @@
-<h1>Products in {{ store.name }}</h1>
-<ul>
-    {% for product in products %}
-        <li>
-            {{ product.name }} - ${{ product.price }}
-            <a href="{% url 'update_product' product.id %}">Edit</a>
-            <a href="{% url 'delete_product' product.id %}">Delete</a>
-        </li>
-    {% endfor %}
-</ul>
-<a href="{% url 'create_product' store.id %}">Create New Product</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products in {{ store.name }}</title>
+    
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #7f8c8d;
+            --white: #ffffff;
+            --success: #28a745;
+        }
+
+        /* General Page Styling */
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-left: 250px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+        .sidebar a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background: #16213e;
+        }
+        .sidebar .active {
+            background: #e94560;
+        }
+
+        /* Content */
+        .content {
+            padding: 30px;
+            position: relative;
+        }
+
+        /* Product Cards */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: visible;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        .product-img-container {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px 12px 0 0;
+        }
+        .product-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+        .product-category {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 2;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Card Body */
+        .card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+            background: white;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        /* Hover Popup */
+        .description-popup {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            width: calc(100% + 40px);
+            max-height: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            padding: 25px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            overflow: hidden;
+        }
+        .product-card:hover .description-popup {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+            top: -30px;
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .popup-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+        .popup-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        .product-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--gray);
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .product-description::-webkit-scrollbar {
+            width: 5px;
+        }
+        .product-description::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        
+        /* Buttons */
+        .btn-group {
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 8px 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: white;
+            border: none;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #e91e63);
+            color: white;
+            border: none;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+            grid-column: 1 / -1;
+        }
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="{% url 'add_product' store.id %}" class="active">
+            <i class="fas fa-plus"></i> Add Product
+        </a>
+        <a href="{% url 'shop_dashboard' %}">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h2 class="mb-4"><i class="fas fa-box"></i> Products in {{ store.name }}</h2>
+
+        <!-- Products Grid -->
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    <div class="product-img-container">
+                        {% if product.product_img %}
+                        <img src="{{ product.product_img.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <span class="product-category">
+                            {{ product.category|default:"Uncategorized" }}
+                        </span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">{{ product.name }}</h5>
+                        <p class="text-danger fw-bold mb-3">${{ product.price }}</p>
+                        
+                        <!-- Description Popup -->
+                        <div class="description-popup">
+                            <div class="popup-header">
+                                <h3 class="popup-title">{{ product.name }}</h3>
+                                <div class="popup-price">${{ product.price }}</div>
+                            </div>
+                            <div class="product-description">
+                                {{ product.description|default:"No description available for this product."|linebreaks }}
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <a href="{% url 'edit_product' product.id %}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h4>No products available</h4>
+                    <p class="mb-0">Add your first product to get started</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -130,7 +130,7 @@
     <!-- Main Container -->
     <div class="main-container">
         <h1>Create a New Shop</h1>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Create Shop</button>
